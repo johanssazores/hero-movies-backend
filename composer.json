@@ -1,0 +1,14 @@
+{
+  "name": "hero-movies/hero-movies",
+  "autoload": {
+    "psr-4": {
+      "HeroMovies\\": "src/"
+    }
+  },
+  "authors": [
+    {
+      "name": "Johanssen Azores",
+      "email": "johanss.zip@gmail.com"
+    }
+  ]
+}
