@@ -1,0 +1,12 @@
+.movie-meta-box-container {
+  width: 100%;
+}
+
+.movie-meta-box-field {
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+.movie-meta-box-field label {
+  display: block;
+}

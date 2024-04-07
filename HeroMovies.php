@@ -10,6 +10,10 @@ Author: Johanssen Azores
 require_once __DIR__ . '/vendor/autoload.php';
 
 // Init plugin
-new HeroMovies\HeroMoviesBackend();
-new HeroMovies\HeroMoviesPostType();
-new HeroMovies\HeroMoviesRestApi();
+use HeroMovies\HeroMoviesPostType;
+use HeroMovies\HeroMoviesBackend;
+use HeroMovies\HeroMoviesRestApi;
+
+HeroMoviesPostType::register();
+HeroMoviesBackend::add_menu();
+HeroMoviesRestApi::register_endpoints();

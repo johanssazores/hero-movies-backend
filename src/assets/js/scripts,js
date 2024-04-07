@@ -1,0 +1,12 @@
+document.addEventListener("DOMContentLoaded", function () {
+  var dateInput = document.getElementById("year_released");
+
+  dateInput.addEventListener("input", function () {
+    var enteredValue = this.value;
+
+    if (!/^\d{4}$/.test(enteredValue)) {
+      this.value = "";
+      alert("Please enter a valid year (YYYY).");
+    }
+  });
+});
