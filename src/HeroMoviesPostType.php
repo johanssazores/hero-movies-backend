@@ -4,7 +4,7 @@ namespace HeroMovies;
 class HeroMoviesPostType {
   public static function register() {
     add_action('init', [__CLASS__, 'init']);
-    
+    add_action('admin_menu', [__CLASS__, 'add_import_page']); 
   }
 
   public static function init() {
@@ -17,6 +17,8 @@ class HeroMoviesPostType {
               'public' => true,
               'has_archive' => true,
               'supports' => array('title', 'thumbnail'),
+              'menu_icon' => 'dashicons-video-alt3', 
+              'menu_position' => 2,
           )
       );
 
@@ -24,6 +26,65 @@ class HeroMoviesPostType {
       add_action('save_post', [__CLASS__, 'save_movie_meta_data']);
       self::enqueue_hero_assets();
   }
+
+  public static function add_import_page() {
+    add_submenu_page(
+      'edit.php?post_type=movies',
+      __('Import Movies', 'textdomain'),
+      __('Import Movies', 'textdomain'),
+      'manage_options',
+      'import-movies',
+      [__CLASS__, 'import_movies_page']
+    );
+  }
+
+  public static function import_movies_page() {
+    if (isset($_FILES['movies_csv']) && $_FILES['movies_csv']['error'] == UPLOAD_ERR_OK) {
+      $csv_file = $_FILES['movies_csv']['tmp_name'];
+      $movies = array_map('str_getcsv', file($csv_file));
+
+      // Extract header row to identify column indices
+      $header = array_shift($movies);
+      $title_index = array_search('Title', $header);
+      $description_index = array_search('Description', $header);
+      $year_released_index = array_search('Year Released', $header);
+
+      foreach ($movies as $movie) {
+        $title = isset($movie[$title_index]) ? $movie[$title_index] : '';
+        $description = isset($movie[$description_index]) ? $movie[$description_index] : '';
+        $year_released = isset($movie[$year_released_index]) ? $movie[$year_released_index] : '';
+
+        $post_id = wp_insert_post(array(
+          'post_title'    => $title,
+          'post_content'  => '',
+          'post_type'     => 'movies',
+          'post_status'   => 'publish'
+        ));
+
+        if ($post_id) {
+          if (!empty($description)) {
+            update_post_meta($post_id, 'movie_description', sanitize_textarea_field($description));
+          }
+          if (!empty($year_released)) {
+            update_post_meta($post_id, 'year_released', sanitize_text_field($year_released));
+          }
+        }
+      }
+
+      echo '<div class="updated"><p>Movies imported successfully!</p></div>';
+    }
+
+    ?>
+    <div class="wrap">
+      <h1><?php _e('Import Movies', 'textdomain'); ?></h1>
+      <form method="post" enctype="multipart/form-data">
+        <input type="file" name="movies_csv" accept=".csv">
+        <input type="submit" class="button button-primary" value="<?php _e('Import', 'textdomain'); ?>">
+      </form>
+    </div>
+    <?php
+  }
+
 
   public static function add_movie_meta_box() {
     add_meta_box(

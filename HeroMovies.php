@@ -11,9 +11,7 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 // Init plugin
 use HeroMovies\HeroMoviesPostType;
-use HeroMovies\HeroMoviesBackend;
 use HeroMovies\HeroMoviesRestApi;
 
 HeroMoviesPostType::register();
-HeroMoviesBackend::add_menu();
 HeroMoviesRestApi::register_endpoints();
