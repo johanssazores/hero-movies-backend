@@ -35,7 +35,7 @@ class HeroMoviesRestApi {
 
 			$user = wp_authenticate($credentials['username'], $credentials['password']);
 			if (is_wp_error($user)) {
-					return new \WP_Error('authentication_failed', __('Invalid username or password.', 'text-domain'), array('status' => 401));
+					return new \WP_Error('message', __('Invalid username or password.', 'text-domain'), array('status' => 401));
 			}
 
 			$token = wp_generate_password(64, false);
@@ -45,6 +45,7 @@ class HeroMoviesRestApi {
 			update_user_meta($user->ID, 'auth_token_expiration', $expiration_time);
 
 			return array(
+					'success' => 1,
 					'token' => $token,
 					'expires_in' => 3600,
 					'message' => __('Login successful.', 'text-domain')
@@ -71,11 +72,11 @@ class HeroMoviesRestApi {
 							wp_set_current_user($user_id);
 							return true;
 					} else {
-							return new \WP_Error('token_expired', __('Token has expired.', 'text-domain'), array('status' => 401));
+							return new \WP_Error('message', __('Token has expired.', 'text-domain'), array('status' => 401));
 					}
 			}
 
-			return new \WP_Error('token_invalid', __('Invalid token.', 'text-domain'), array('status' => 401));
+			return new \WP_Error('message', __('Invalid token.', 'text-domain'), array('status' => 401));
 	}
 
 	public static function get_movies($request) {
@@ -109,6 +110,7 @@ class HeroMoviesRestApi {
 			$total_pages = $total_movies > 0 ? ceil($total_movies / $posts_per_page) : 0;
 
 			return array(
+					'success' => 1,
 					'movies' => $movies,
 					'total_movies' => $total_movies,
 					'total_pages' => $total_pages,
@@ -123,10 +125,11 @@ class HeroMoviesRestApi {
       $movie = get_post($movie_id);
 
       if (!$movie) {
-          return new \WP_Error('error', 'Movie not found', array('status' => 404));
+          return new \WP_Error('message', 'Movie not found', array('status' => 404));
       }
 
       return array(
+					'success' => 1,
           'id' => $movie->ID,
           'title' => $movie->post_title,
           'description' => get_post_meta($movie->ID, 'movie_description', true),
