@@ -78,30 +78,45 @@ class HeroMoviesRestApi {
 			return new \WP_Error('token_invalid', __('Invalid token.', 'text-domain'), array('status' => 401));
 	}
 
-  public static function get_movies() {
-      $args = array(
-          'post_type' => 'movies',
-          'posts_per_page' => -1
-      );
+	public static function get_movies($request) {
+			$params = $request->get_params();
+			$paged = isset($params['paged']) ? intval($params['paged']) : 1; 
+			$posts_per_page = isset($params['posts_per_page']) ? intval($params['posts_per_page']) : 10;
 
-      $movies_query = new \WP_Query($args);
-      $movies = array();
+			$args = array(
+					'post_type'      => 'movies',
+					'posts_per_page' => $posts_per_page,
+					'paged'          => $paged,
+			);
 
-      if ($movies_query->have_posts()) {
-          while ($movies_query->have_posts()) {
-              $movies_query->the_post();
-              $movies[] = array(
-                  'id' => get_the_ID(),
-                  'title' => get_the_title(),
-                  'description' => get_post_meta(get_the_ID(), 'movie_description', true),
-                  'year' => get_post_meta(get_the_ID(), 'year_released', true)
-              );
-          }
-      } 
-      wp_reset_postdata();
+			$movies_query = new \WP_Query($args);
+			$movies = array();
 
-      return $movies;
-  }
+			if ($movies_query->have_posts()) {
+					while ($movies_query->have_posts()) {
+							$movies_query->the_post();
+							$movies[] = array(
+									'id'          => get_the_ID(),
+									'title'       => get_the_title(),
+									'description' => get_post_meta(get_the_ID(), 'movie_description', true),
+									'year'        => get_post_meta(get_the_ID(), 'year_released', true)
+							);
+					}
+			} 
+			wp_reset_postdata();
+
+			$total_movies = $movies_query->found_posts;
+			$total_pages = $total_movies > 0 ? ceil($total_movies / $posts_per_page) : 0;
+
+			return array(
+					'movies' => $movies,
+					'total_movies' => $total_movies,
+					'total_pages' => $total_pages,
+					'current_page' => $paged,
+			);
+	}
+
+
 
   public static function get_movie($data) {
       $movie_id = $data['id'];

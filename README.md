@@ -30,7 +30,7 @@ curl -X POST http://your-wordpress-site.com/wp-json/herothemes/v1/login \
 ```
 
 ```
-curl -X GET http://your-wordpress-site.com/wp-json/herothemes/v1/movies \
+curl -X GET http://your-wordpress-site.com/wp-json/herothemes/v1/movies?paged=1&posts_per_page=10 \
 -H "Authorization: Bearer <your_token>"
 ```
 
