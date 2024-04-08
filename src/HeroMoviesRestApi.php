@@ -13,6 +13,11 @@ class HeroMoviesRestApi {
 					'callback' => [__CLASS__, 'login_user'],
 			));
 
+			register_rest_route('herothemes/v1', '/verify-token', array(
+					'methods' => 'GET',
+					'callback' => [__CLASS__, 'verify_user_token'],
+			));
+
 			register_rest_route('herothemes/v1', '/movies', array(
 					'methods' => 'GET',
 					'callback' => [__CLASS__, 'get_movies'],
@@ -77,6 +82,19 @@ class HeroMoviesRestApi {
 			}
 
 			return new \WP_Error('message', __('Invalid token.', 'text-domain'), array('status' => 401));
+	}
+
+	public static function verify_user_token($request) {
+			$valid = self::verify_token();
+
+			if (is_wp_error($valid)) {
+					return $valid; 
+			}
+
+			return array(
+					'success' => 1,
+					'message' => __('Token is valid.', 'text-domain')
+			);
 	}
 
 	public static function get_movies($request) {
