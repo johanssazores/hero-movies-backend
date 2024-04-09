@@ -7,11 +7,12 @@ A simple WordPress plugin that offers a RESTful API to provide a list of movies 
 ### Requirements
 
 - PHP 8.2 or Latest.
+- Composer
 - Installed WordPress Application
 - Postman or any alternative API client
 
 ### Step by Step Guide
-
+- You need to execute "composer install" within the plugin directory in the terminal.
 - Access your WordPress Dashboard.
 - Navigate to Plugins, then select Add New Plugin.
 - Click on Upload Plugin, and proceed to upload the project zip file.
