@@ -49,10 +49,17 @@ class HeroMoviesRestApi {
 			update_user_meta($user->ID, 'auth_token', $token);
 			update_user_meta($user->ID, 'auth_token_expiration', $expiration_time);
 
+			$user_details = array(
+					'user_id' => $user->ID,
+					'username' => $user->user_login,
+					'email' => $user->user_email
+			);
+
 			return array(
 					'success' => 1,
 					'token' => $token,
 					'expires_in' => 3600,
+					'user' => $user_details,
 					'message' => __('Login successful.', 'text-domain')
 			);
 	}
